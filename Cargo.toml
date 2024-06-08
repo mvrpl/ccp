@@ -1,0 +1,13 @@
+[package]
+name = "ccp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.6", features = ["derive"] }
+homedir = "0.2.1"
+lazy_static = "1.4.0"
+reqwest = { version = "0.12.4", features = ["json", "multipart", "blocking"] }
+securestore = "0.100.0"
+tokio = { version = "1.38.0", features = ["full"] }
+url = "2.5.0"
