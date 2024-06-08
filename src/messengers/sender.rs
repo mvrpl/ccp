@@ -17,7 +17,7 @@ impl Sender {
                     uri.host_str().unwrap().to_string(),
                     params.input_file.to_string(),
                     match hash_query.get("caption") {
-                        Some(c) => c.to_string(),
+                        Some(c) => c.strip_prefix("'").unwrap().strip_suffix("'").unwrap().to_string(),
                         None => String::from(""),
                     },
                 )
