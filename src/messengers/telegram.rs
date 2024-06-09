@@ -5,7 +5,7 @@ use crate::VAULT;
 pub struct Telegram;
 
 impl Telegram {
-    pub fn make_request(chat_id: String, file_path: String, caption: String) {
+    pub fn make_request(chat_id: String, file_path: std::path::PathBuf, caption: String) {
         let url = format!(
             "https://api.telegram.org/bot{}/sendDocument",
             VAULT.get("telegram_token").unwrap()

@@ -1,12 +1,14 @@
-mod utils;
 mod messengers;
+mod utils;
 
 use clap::{Args, Parser, Subcommand};
+use clap_stdin::MaybeStdin;
 use lazy_static::lazy_static;
 use securestore::SecretsManager;
+use tempdir::TempDir;
 
-use utils::vault::Vault;
 use messengers::sender::Sender;
+use utils::vault::Vault;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -17,7 +19,14 @@ struct Cli {
 
 #[derive(Args, Debug)]
 struct CmdCpArgs {
-    input_file: String,
+    input_file: MaybeStdin<String>,
+    #[arg(long, short)]
+    file_name: Option<String>,
+    messenger_target: String,
+}
+
+struct CpArgs {
+    input_file: std::path::PathBuf,
     messenger_target: String,
 }
 
@@ -35,13 +44,27 @@ enum Commands {
 
 lazy_static! {
     static ref VAULT: SecretsManager = Vault::init();
+    static ref TEMP_DIR: TempDir = TempDir::new("ccp").expect("Failed create temporary dir");
 }
 
 fn main() {
     let args = Cli::parse();
-    match &args.command {
+    match args.command {
         Commands::Cp(cmd_args) => {
-            Sender::copy_file_to_chat(cmd_args)
+            let in_file = match std::fs::metadata(cmd_args.input_file.clone().into_inner()) {
+                Ok(file) if file.is_file() => std::path::PathBuf::from(cmd_args.input_file.clone().into_inner()),
+                Ok(_) => panic!("Input_file is not a file"),
+                Err(_) => {
+                    let temp_file_path = TEMP_DIR.path().join(cmd_args.file_name.expect("Send -f or --file-name"));
+                    std::fs::write(&temp_file_path, cmd_args.input_file.into_inner()).ok();
+                    temp_file_path
+                }
+            };
+            let args = CpArgs{
+                input_file: in_file,
+                messenger_target: cmd_args.messenger_target,
+            };
+            Sender::copy_file_to_chat(args)
         }
         Commands::Mv(cmd_args) => {
             println!("{:?}", cmd_args)
