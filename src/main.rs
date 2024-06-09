@@ -52,30 +52,39 @@ pub fn drop_temp() {
 }
 
 fn main() {
-    let args = Cli::parse();
-    match args.command {
-        Commands::Cp(cmd_args) => {
-            let in_file = match std::fs::metadata(cmd_args.input_file.clone().into_inner()) {
-                Ok(file) if file.is_file() => std::path::PathBuf::from(cmd_args.input_file.clone().into_inner()),
-                Ok(_) => {
-                    drop_temp();
-                    panic!("Input_file is not a file")
-                }
-                Err(_) => {
-                    let temp_file_path = TEMP_DIR.path().join(cmd_args.file_name.expect("Send -f or --file-name"));
-                    std::fs::write(&temp_file_path, cmd_args.input_file.into_inner()).ok();
-                    temp_file_path
-                }
-            };
-            let args = CpArgs{
-                input_file: in_file,
-                messenger_target: cmd_args.messenger_target,
-            };
-            Sender::copy_file_to_chat(args)
+    let result = std::panic::catch_unwind(|| {
+        let args = Cli::parse();
+        match args.command {
+            Commands::Cp(cmd_args) => {
+                let in_file = match std::fs::metadata(cmd_args.input_file.clone().into_inner()) {
+                    Ok(file) if file.is_file() => {
+                        std::path::PathBuf::from(cmd_args.input_file.clone().into_inner())
+                    }
+                    Ok(_) => panic!("Input_file is not a file"),
+                    Err(_) => {
+                        let temp_file_path = TEMP_DIR
+                            .path()
+                            .join(cmd_args.file_name.expect("Send -f or --file-name"));
+                        std::fs::write(&temp_file_path, cmd_args.input_file.into_inner()).ok();
+                        temp_file_path
+                    }
+                };
+                let args = CpArgs {
+                    input_file: in_file,
+                    messenger_target: cmd_args.messenger_target,
+                };
+                Sender::copy_file_to_chat(args)
+            }
+            Commands::Mv(cmd_args) => {
+                println!("{:?}", cmd_args)
+            }
         }
-        Commands::Mv(cmd_args) => {
-            println!("{:?}", cmd_args)
+    });
+    match result {
+        Ok(_) => drop_temp(),
+        Err(_) => {
+            drop_temp();
+            std::process::exit(1)
         }
     }
-    drop_temp()
 }
