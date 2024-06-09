@@ -32,7 +32,7 @@ struct CpArgs {
 
 #[derive(Args, Debug)]
 struct CmdMvArgs {
-    input_file: String,
+    input_file: std::path::PathBuf,
     messenger_target: String,
 }
 
@@ -76,7 +76,13 @@ fn main() {
                 Sender::copy_file_to_chat(args)
             }
             Commands::Mv(cmd_args) => {
-                println!("{:?}", cmd_args)
+                assert!(std::fs::metadata(cmd_args.input_file.clone().into_os_string().into_string().unwrap()).unwrap().is_file(), "Input_file is not a file");
+                let args = CpArgs {
+                    input_file: cmd_args.input_file.clone(),
+                    messenger_target: cmd_args.messenger_target,
+                };
+                Sender::copy_file_to_chat(args);
+                std::fs::remove_file(cmd_args.input_file).expect("Failed on remove input_file")
             }
         }
     });
