@@ -2,11 +2,19 @@ use url::Url;
 
 use super::telegram::Telegram;
 use super::whatsapp::WhatsApp;
-use crate::CpArgs;
+use crate::{CpArgs, drop_temp};
 
 use std::collections::HashMap;
 
 pub struct Sender;
+
+impl Drop for Sender {
+    fn drop(&mut self) {
+        if std::thread::panicking() {
+            drop_temp();
+        }
+    }
+}
 
 impl Sender {
     pub fn copy_file_to_chat(params: CpArgs) {

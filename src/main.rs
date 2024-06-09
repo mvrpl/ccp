@@ -47,13 +47,20 @@ lazy_static! {
     static ref TEMP_DIR: TempDir = TempDir::new("ccp").expect("Failed create temporary dir");
 }
 
+pub fn drop_temp() {
+    std::fs::remove_dir_all(TEMP_DIR.path()).expect("Failed remove temporary dir")
+}
+
 fn main() {
     let args = Cli::parse();
     match args.command {
         Commands::Cp(cmd_args) => {
             let in_file = match std::fs::metadata(cmd_args.input_file.clone().into_inner()) {
                 Ok(file) if file.is_file() => std::path::PathBuf::from(cmd_args.input_file.clone().into_inner()),
-                Ok(_) => panic!("Input_file is not a file"),
+                Ok(_) => {
+                    drop_temp();
+                    panic!("Input_file is not a file")
+                }
                 Err(_) => {
                     let temp_file_path = TEMP_DIR.path().join(cmd_args.file_name.expect("Send -f or --file-name"));
                     std::fs::write(&temp_file_path, cmd_args.input_file.into_inner()).ok();
@@ -70,4 +77,5 @@ fn main() {
             println!("{:?}", cmd_args)
         }
     }
+    drop_temp()
 }
