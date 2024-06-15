@@ -11,20 +11,34 @@ Copy files to chat systems like Telegram, WhatsApp.
 - Multi-OS (Windows, Mac e Linux)
 
 
-## Instalação
+## Como usar
 
 #### Windows x86|ARM 64 bits
 
-```console
+```powershell
 scoop bucket add mvrpl https://github.com/mvrpl/windows-apps
 scoop install mvrpl/ccp
+scoop install mvrpl/ssclient
+New-Item -Path '~\.ccp' -Type Directory
+ssclient create ~\.ccp\secrets.json
+ssclient -s ~\.ccp\secrets.json set telegram_token
+ssclient -s ~\.ccp\secrets.json set graph_bearer_token
+$env.CCP_VAULT_PASS='<SENHA secrets.json>'
+ccp cp <caminho_arquivo> [telegram|whatsapp]://...
 ```
 
 #### Linux x86|ARM 64 bits - MacOS x86|ARM 64 bits
 
-```console
+```bash
 brew tap mvrpl/unix-apps https://github.com/mvrpl/unix-apps
 brew install mvrpl/unix-apps/ccp
+cargo install ssclient
+mkdir ~/.ccp
+ssclient create ~/.ccp/secrets.json
+ssclient -s ~/.ccp/secrets.json set telegram_token
+ssclient -s ~/.ccp/secrets.json set graph_bearer_token
+export CCP_VAULT_PASS='<SENHA secrets.json>'
+ccp cp <caminho_arquivo> [telegram|whatsapp]://...
 ```
 ## Autores
 
