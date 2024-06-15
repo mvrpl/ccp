@@ -40,7 +40,7 @@ ssclient -s ~/.ccp/secrets.json set graph_bearer_token
 export CCP_VAULT_PASS='<SENHA secrets.json>'
 ccp cp <caminho_arquivo> [telegram|whatsapp]://...
 ```
-## Autores
+## Autor
 
 - [@mvrpl](https://www.github.com/mvrpl)
 
