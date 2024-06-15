@@ -3,7 +3,7 @@
 [![MIT licensed][gnu-badge]][gnu-url]
 
 [gnu-badge]: https://img.shields.io/badge/license-GNU3.0-blue.svg
-[gnu-url]: https://github.com/mvrpl/ccp/blob/master/LICENSE
+[gnu-url]: https://github.com/mvrpl/ccp/blob/main/LICENSE
 
 # Chat Copy Protocol
 
