@@ -1,5 +1,9 @@
 [![build and release](https://github.com/mvrpl/ccp/actions/workflows/builds.yaml/badge.svg)](https://github.com/mvrpl/ccp/actions/workflows/builds.yaml)
 [![dependency status](https://deps.rs/repo/github/mvrpl/ccp/status.svg)](https://deps.rs/repo/github/mvrpl/ccp)
+[![MIT licensed][gnu-badge]][gnu-url]
+
+[gnu-badge]: https://img.shields.io/badge/license-GNU3.0-blue.svg
+[gnu-url]: https://github.com/mvrpl/ccp/blob/master/LICENSE
 
 # Chat Copy Protocol
 
@@ -44,9 +48,4 @@ ccp cp <caminho_arquivo> [telegram|whatsapp]://...
 ## Autor
 
 - [@mvrpl](https://www.github.com/mvrpl)
-
-
-## Licença
-
-[GNU General Public License v3.0](https://github.com/mvrpl/ccp/blob/main/LICENSE)
 
