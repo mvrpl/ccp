@@ -18,4 +18,4 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        title: Release ${{ github.ref }}
+        title: Release version ${{ github.ref_name }}
