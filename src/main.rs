@@ -2,13 +2,14 @@ mod messengers;
 mod utils;
 
 use clap::{Args, Parser, Subcommand};
-use clap_stdin::MaybeStdin;
 use lazy_static::lazy_static;
 use securestore::SecretsManager;
 use tempdir::TempDir;
 
 use messengers::sender::Sender;
 use utils::vault::Vault;
+
+use std::io::Read;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -19,7 +20,7 @@ struct Cli {
 
 #[derive(Args, Debug)]
 struct CmdCpArgs {
-    input_file: MaybeStdin<String>,
+    input_file: String,
     #[arg(long, short)]
     file_name: Option<String>,
     messenger_target: String,
@@ -56,16 +57,18 @@ fn main() {
         let args = Cli::parse();
         match args.command {
             Commands::Cp(cmd_args) => {
-                let in_file = match std::fs::metadata(cmd_args.input_file.clone().into_inner()) {
+                let in_file = match std::fs::metadata(cmd_args.input_file.clone()) {
                     Ok(file) if file.is_file() => {
-                        std::path::PathBuf::from(cmd_args.input_file.clone().into_inner())
+                        std::path::PathBuf::from(cmd_args.input_file)
                     }
                     Ok(_) => panic!("Input_file is not a file"),
                     Err(_) => {
                         let temp_file_path = TEMP_DIR
                             .path()
                             .join(cmd_args.file_name.expect("Send -f or --file-name"));
-                        std::fs::write(&temp_file_path, cmd_args.input_file.into_inner()).ok();
+                        let data: Result<Vec<_>, _> = std::io::stdin().bytes().collect();
+                        let data = data.expect("Unable to read data");
+                        std::fs::write(&temp_file_path, &data).ok();
                         temp_file_path
                     }
                 };
@@ -76,7 +79,19 @@ fn main() {
                 Sender::copy_file_to_chat(args)
             }
             Commands::Mv(cmd_args) => {
-                assert!(std::fs::metadata(cmd_args.input_file.clone().into_os_string().into_string().unwrap()).unwrap().is_file(), "Input_file is not a file");
+                assert!(
+                    std::fs::metadata(
+                        cmd_args
+                            .input_file
+                            .clone()
+                            .into_os_string()
+                            .into_string()
+                            .unwrap()
+                    )
+                    .unwrap()
+                    .is_file(),
+                    "Input_file is not a file"
+                );
                 let args = CpArgs {
                     input_file: cmd_args.input_file.clone(),
                     messenger_target: cmd_args.messenger_target,
