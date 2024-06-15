@@ -1,3 +1,4 @@
+[![build and release](https://github.com/mvrpl/ccp/actions/workflows/builds.yaml/badge.svg)](https://github.com/mvrpl/ccp/actions/workflows/builds.yaml)
 [![dependency status](https://deps.rs/repo/github/mvrpl/ccp/status.svg)](https://deps.rs/repo/github/mvrpl/ccp)
 
 # Chat Copy Protocol
