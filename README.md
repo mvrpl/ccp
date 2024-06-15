@@ -1,8 +1,8 @@
+[![dependency status](https://deps.rs/repo/github/mvrpl/ccp/status.svg)](https://deps.rs/repo/github/mvrpl/ccp)
 
 # Chat Copy Protocol
 
 Copy files to chat systems like Telegram, WhatsApp.
-
 
 ## Funcionalidades
 
